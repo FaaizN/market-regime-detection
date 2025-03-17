@@ -137,16 +137,18 @@ class MarketDataFetcher:
         # Create a copy to avoid modifying original data
         enhanced_data = data.copy()
 
+        # For each column in the dataframe
+        for column in data.columns:
         # Calculate the rolling averages
-        for window in [5, 10, 20, 50, 200]:
-            enhanced_data[f'MA_{window}'] = data.rolling(window = window).mean()
-
-        # Calculate the volatility (std. dev)
-        enhanced_data['Volatility_20'] = data.rolling(window = 20).std()
-
-        # Calculate the return rates
-        enhanced_data['Return_1D'] = data.pct_change(periods = 1)
-        enhanced_data['Return_5D'] = data.pct_change(periods = 5)
-        enhanced_data['Return_20D'] = data.pct_change(periods = 20)
-
+            for window in [5, 10, 20, 50, 200]:
+                enhanced_data[f'{column}_MA_{window}'] = data[column].rolling(window=window).mean()
+        
+            # Calculate the volatility (std. dev)
+            enhanced_data[f'{column}_VOL_20'] = data[column].rolling(window=20).std()
+        
+            # Calculate the return rates
+            enhanced_data[f'{column}_RET_1D'] = data[column].pct_change(periods=1)
+            enhanced_data[f'{column}_RET_5D'] = data[column].pct_change(periods=5)
+            enhanced_data[f'{column}_RET_20D'] = data[column].pct_change(periods=20)
+    
         return enhanced_data
